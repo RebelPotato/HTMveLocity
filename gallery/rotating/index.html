@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>一种旋转方法</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css"
+      integrity="sha384-wcIxkf4k558AjM3Yz3BBFQUbk/zgIYC2R0QpeeYb+TwlBVMrlgLqwRjRtGZiK7ww"
+      crossorigin="anonymous"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"
+      integrity="sha384-hIoBPJpTUs74ddyc4bFZSM1TVlQDA60VBbJS0oA934VSz82sBx1X7kSx2ATBDIyd"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <script type="module">
+      import { KatexBlock, KatexInline } from "./utils.js";
+      window.customElements.define("katex-block", KatexBlock);
+      window.customElements.define("katex-inline", KatexInline);
+    </script>
+  </head>
+  <body class="ph5-l ph4 pv0">
+    <main>
+      <article>
+        <h1 class=".lh-title mh3 mt4 mb3">通过剪切旋转</h1>
+        <p class="mh3 mv1">BY hcx</p>
+        <pre
+          class="mh3 mt0 mb4"
+        ><time datetime="20240627">2024-06-27</time></pre>
+
+        <section id="intro">
+          <p>
+            我们知道，像素排列在一个方形的网格上，而这个网格是没法旋转的。那么该怎么旋转一张图片？
+          </p>
+          <aside class="sidenote">
+            帅气的飞船图片与文章灵感均来自
+            <a
+              href="https://cohost.org/tomforsyth/post/891823-rotation-with-three"
+              >这篇文章</a
+            >。
+          </aside>
+          <figure>
+            <svg max-height="300" id="img1" viewBox="-105 -50 210 100">
+              <defs>
+                <clipPath id="cut-off-grid">
+                  <rect x="-50" y="-50" width="100" height="100" />
+                </clipPath>
+                <g id="grid1"></g>
+              </defs>
+
+              <rect x="-105" y="-50" width="100" height="100" fill="#111111" />
+              <rect x="5" y="-50" width="100" height="100" fill="#111111" />
+              <g transform="translate(-55, 0)" clip-path="url(#cut-off-grid)">
+                <g class="left-side">
+                  <use href="#grid1" />
+                </g>
+              </g>
+              <use
+                href="#grid1"
+                transform="translate(55, 0)"
+                clip-path="url(#cut-off-grid)"
+              />
+              <g class="right-side" transform="translate(55, 0)"></g>
+              <g transform="translate(-55, 0) rotate(45)">
+                <rect x="-5" y="-22" width="10" height="44" fill="#FF413688" />
+                <rect x="-22" y="-5" width="17" height="10" fill="#FF413688" />
+                <rect x="5" y="-5" width="17" height="10" fill="#FF413688" />
+              </g>
+              <circle
+                cx="55"
+                cy="0"
+                r="20"
+                stroke="#19A97488"
+                stroke-width="6"
+                fill="#00000000"
+              ></circle>
+            </svg>
+            <script type="module">
+              import {
+                loadBitmap,
+                svg,
+                Clock,
+                rotate,
+                arrayToBase64,
+              } from "./utils.js";
+              const fighter = await loadBitmap("./Rtyper9.png");
+              const img1 = document.getElementById("img1");
+
+              const grid1 = img1.querySelector("#grid1");
+
+              const leftSide = img1.querySelector(".left-side");
+              const rightSide = img1.querySelector(".right-side");
+              const size = 120;
+
+              const gap1 = size / fighter.width;
+              for (let i = -34; i <= 34; i++) {
+                grid1.innerHTML += `
+                  <line x1="-100" y1="${i * gap1}" x2="100" y2="${
+                  i * gap1
+                }" stroke="#555555" stroke-width="0.5" />
+                  <line x1="${i * gap1}" y1="-100" x2="${
+                  i * gap1
+                }" y2="100" stroke="#555555" stroke-width="0.5" />
+                `;
+              }
+
+              leftSide.appendChild(
+                svg("image", {
+                  href: arrayToBase64(fighter),
+                  width: size,
+                  height: size,
+                  style: "image-rendering: pixelated;",
+                  transform: `translate(${-size / 2}, ${-size / 2})`,
+                })
+              );
+
+              function update(angle) {
+                leftSide.setAttribute(
+                  "transform",
+                  `rotate(${(-angle / Math.PI) * 180})`
+                );
+                rightSide.innerHTML = "";
+                rightSide.appendChild(
+                  svg("image", {
+                    href: arrayToBase64(rotate(fighter, angle)),
+                    width: size,
+                    height: size,
+                    style: "image-rendering: pixelated;",
+                    transform: `translate(${-size / 2}, ${-size / 2})`,
+                  })
+                );
+              }
+
+              const clock1 = new Clock();
+              const loopTime1 = 20;
+              function fn1(t) {
+                return (t / 1000 / loopTime1) * Math.PI * 2;
+              }
+              clock1.set((t) => update(fn1(t)));
+              clock1.on();
+            </script>
+            <figcaption>
+              像素网格上不能进行的旋转，以及可以进行的“旋转”（使用本文介绍的算法）
+            </figcaption>
+          </figure>
+          <aside class="sidenote">
+            更多的旋转算法可以在<a href="http://www.leptonica.org/rotation.html"
+              >这里</a
+            >查看。<br />
+            <em>警告：大段大段的英文</em>
+          </aside>
+          <p>
+            这篇文章我想向大家介绍这些算法中的一个，它是我目前为止见过的最优美的算法之一。它的核心想法是：
+          </p>
+          <p class="f3 lh-title">
+            能不能把一个旋转<span class="wavy">拆分</span
+            >为几个简单的，能进行的操作？
+          </p>
+        </section>
+
+        <section>
+          <h2>分而治之</h2>
+          <p>线性代数告诉我们，旋转是一个线性变换，它可以用一个矩阵表示。</p>
+          <figure>
+            <svg
+              class="bg-near-black"
+              height="300"
+              viewBox="-200 -200 400 400"
+              id="img2"
+            >
+              <defs>
+                <!-- A marker to be used as an arrowhead -->
+                <marker
+                  id="arrow"
+                  viewBox="0 0 10 10"
+                  refX="5"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    stroke="context-stroke"
+                    fill="context-fill"
+                    d="M 0 0 L 10 5 L 0 10 z"
+                  />
+                </marker>
+              </defs>
+              <line
+                x1="-200"
+                y1="0"
+                x2="200"
+                y2="0"
+                stroke="#F4F4F4"
+                stroke-width="2"
+              />
+              <line
+                x1="0"
+                y1="-200"
+                x2="0"
+                y2="200"
+                stroke="#F4F4F4"
+                stroke-width="2"
+              />
+              <g class="rotatableGroup">
+                <g id="grid"></g>
+                <line
+                  class="vectorX"
+                  x1="0"
+                  y1="0"
+                  x2="100"
+                  y2="0"
+                  marker-end="url(#arrow)"
+                  stroke="#19A974"
+                  stroke-width="2"
+                />
+                <line
+                  class="vectorY"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="100"
+                  marker-end="url(#arrow)"
+                  stroke="#FF4136"
+                  stroke-width="2"
+                />
+              </g>
+            </svg>
+            <katex-block
+              data-expr="
+                \begin{bmatrix}
+                x'\\y'
+                \end{bmatrix}
+                = 
+                \begin{bmatrix}
+                \textcolor{#19A974} {cos(\theta)} & \textcolor{#FF4136} {-sin(\theta)} \\
+                \textcolor{#19A974} {sin(\theta)} & \textcolor{#FF4136}  {cos(\theta)}
+                \end{bmatrix}
+                \cdot 
+                \begin{bmatrix}
+                \textcolor{#19A974} {x} \\ \textcolor{#FF4136} {y}
+                \end{bmatrix}
+              "
+            ></katex-block>
+            <div class="input">
+              <label for="theta2">theta</label>
+              <input
+                type="range"
+                min="0"
+                max="359"
+                step="1"
+                value="0"
+                id="theta2"
+              />
+              <span id="theta2-display" style="width: 3rem">0</span>
+            </div>
+            <script type="module">
+              import { Clock } from "./utils.js";
+              const img2 = document.getElementById("img2");
+              const grid = img2.querySelector("#grid");
+              const rotatableGroup = img2.querySelector(".rotatableGroup");
+              const theta2El = document.getElementById("theta2");
+              const theta2Dis = document.getElementById("theta2-display");
+              const n = 5;
+              const gap = 200 / n;
+              for (let i = -2 * n; i <= 2 * n; i++) {
+                grid.innerHTML += `
+                  <line x1="-400" y1="${i * gap}" x2="400" y2="${
+                  i * gap
+                }" stroke="#AAAAAA" />
+                  <line x1="${i * gap}" y1="-400" x2="${
+                  i * gap
+                }" y2="400" stroke="#AAAAAA" />
+                `;
+              }
+              function rotateGroup(angle) {
+                rotatableGroup.setAttribute(
+                  "transform",
+                  `scale(1, -1) rotate(${angle})`
+                );
+              }
+              function update(angle) {
+                if (angle === undefined) angle = theta2El.value;
+                else theta2El.value = angle;
+                rotateGroup(angle);
+                theta2Dis.textContent = `${angle}°`;
+              }
+              const rt = 1000 * 16;
+              let fn2 = (t, angle0, t0) => {
+                // ensure that fn(t0, angle0, t0) == angle0
+                const angle = Math.floor(
+                  (((t - t0) / rt) * 360 + angle0) % 360
+                );
+                return angle;
+              };
+              const clock2 = new Clock((t) => {
+                update(fn2(t, 0, 0));
+              });
+              theta2El.addEventListener("input", (e) => {
+                const now = clock2.now;
+                const angle = parseInt(theta2El.value);
+                const delay = 4000;
+                clock2.set((t) => {
+                  if (t - now < delay) return;
+                  update(fn2(t, angle, now + delay));
+                });
+                update();
+              });
+              update();
+
+              clock2.on();
+            </script>
+            <figcaption>
+              将一个黑底上的网格进行旋转，用红绿色标注出两个新的列向量，并展示一个同样配色的矩阵。
+            </figcaption>
+          </figure>
+          <p>
+            这个算法的目标是，将一个旋转表示为
+            <span class="wavy">几个线性变换的叠加</span>
+            ，使得这些简单的线性变换能在像素网格上完成。它利用了以下两个观察。
+          </p>
+          <p>
+            <span class="f3">1. </span
+            >对于一张像素图，剪切（shear）操作，另一种线性变换，可以
+            <span class="wavy">近似地</span>
+            进行；只要我们限制剪切方向只沿坐标轴方向。
+          </p>
+          <figure>
+            <svg max-height="200" id="img3" viewBox="-170 -50 340 100">
+              <defs>
+                <g id="axis3">
+                  <rect
+                    x="-50"
+                    y="-50"
+                    width="100"
+                    height="100"
+                    fill="#111111"
+                  />
+                  <line
+                    x1="0"
+                    y1="-50"
+                    x2="0"
+                    y2="50"
+                    stroke="#f4f4f4"
+                    stroke-width="2"
+                  />
+                  <line
+                    x1="-50"
+                    y1="0"
+                    x2="50"
+                    y2="0"
+                    stroke="#f4f4f4"
+                    stroke-width="2"
+                  />
+                </g>
+                <g id="square">
+                  <rect x="-27" y="-27" width="54" height="54" fill="#f4f4f4" />
+                </g>
+              </defs>
+              <use href="#axis3" transform="translate(-120, 0)" />
+              <use href="#axis3" transform="translate(0, 0)" />
+              <use href="#axis3" transform="translate(120, 0)" />
+              <g transform="scale(1, -1)">
+                <g class="left-square" transform="translate(-120, 0)">
+                  <use href="#square" />
+                </g>
+                <use href="#square" transform="translate(0, 0)" />
+                <g class="right-square" transform="translate(120, 0)">
+                  <use href="#square" />
+                </g>
+              </g>
+            </svg>
+            <katex-block
+              data-expr="
+                \begin{bmatrix}
+                1 & \textcolor{#FF4136} {shearY} \\ 0 & 1
+                \end{bmatrix}
+                , 
+                \begin{bmatrix}
+                1 & 0 \\ 0 & 1
+                \end{bmatrix}
+                , 
+                \begin{bmatrix}
+                1 & 0 \\ \textcolor{#19A974} {shearX} & 1
+                \end{bmatrix}
+              "
+            ></katex-block>
+            <div class="input mv2">
+              <label for="shear-amount">shear</label>
+              <input
+                type="range"
+                min="-1"
+                max="1"
+                step="0.01"
+                value="0"
+                id="shear-amount"
+              />
+              <span id="shear-amount-display" style="width: 3rem"></span>
+            </div>
+            <script type="module">
+              import {
+                shearX,
+                shearY,
+                Clock,
+                svg,
+                arrayToBase64,
+              } from "./utils.js";
+
+              const squareSide = 11;
+              const squareData = [];
+              for (let i = 0; i < squareSide; i++) {
+                for (let j = 0; j < squareSide; j++) {
+                  squareData.push({
+                    x: i + squareSide,
+                    y: j + squareSide,
+                    r: 34 + (253 - 34) * (i / squareSide),
+                    g: 193 + (187 - 193) * (i / squareSide),
+                    b: 195 + (45 - 195) * (i / squareSide),
+                    a: 1,
+                  });
+                }
+              }
+              const aSquare = {
+                width: squareSide * 3,
+                height: squareSide * 3,
+                pixels: squareData,
+              };
+
+              function makeSquare(data, dx) {
+                return svg("image", {
+                  href: arrayToBase64(data),
+                  width: 150,
+                  height: 150,
+                  style: "image-rendering: pixelated;",
+                  transform: `translate(${-75 + dx}, -75)`,
+                });
+              }
+              const squareImg = makeSquare(aSquare, 0);
+              const img3 = document.getElementById("img3");
+
+              img3.appendChild(squareImg);
+              let added = [];
+
+              const leftSquare = img3.querySelector(".left-square");
+              const rightSquare = img3.querySelector(".right-square");
+              const shearAmount = document.getElementById("shear-amount");
+              const shearAmountDisplay = document.getElementById(
+                "shear-amount-display"
+              );
+              function update(shear) {
+                if (shear === undefined) shear = shearAmount.value;
+                else shearAmount.value = shear;
+                added.forEach((el) => el.remove());
+                added = [];
+                added.push(makeSquare(shearX(aSquare, shear), -120));
+                added.push(makeSquare(shearY(aSquare, shear), 120));
+                added.forEach((el) => img3.appendChild(el));
+
+                leftSquare.setAttribute(
+                  "transform",
+                  `translate(-120, 0) skewX(${
+                    (Math.atan(shear) / Math.PI) * 180
+                  })`
+                );
+                rightSquare.setAttribute(
+                  "transform",
+                  `translate(120, 0) skewY(${
+                    (Math.atan(shear) / Math.PI) * 180
+                  })`
+                );
+                shearAmountDisplay.textContent = `${shear}`;
+              }
+              const loopTime = 10;
+              function fn3(t, shear0, t0) {
+                // ensure that fn3(t0, shear0, t0) == shear0
+                const shear =
+                  Math.round(
+                    Math.sin(
+                      (((t - t0) / 1000) * Math.PI * 2) / loopTime +
+                        Math.asin(shear0)
+                    ) * 100
+                  ) / 100;
+                return shear;
+              }
+              const clock3 = new Clock((t) => update(fn3(t, 0, 0)));
+              shearAmount.addEventListener("input", (e) => {
+                const now = clock3.now;
+                const shear = parseInt(shearAmount.value);
+                const delay = 5000;
+                clock3.set((t) => {
+                  if (t - now < delay) return;
+                  update(fn3(t, shear, now + delay));
+                });
+                update();
+              });
+              update();
+              clock3.on();
+            </script>
+            <figcaption>
+              一个渐变色的方块（黄到蓝），左右两图分别展示X与Y方向的剪切。
+            </figcaption>
+          </figure>
+          <p>
+            方法很简单：对于X轴方向的剪切，选定中心行
+            <katex-inline data-expr="i"></katex-inline> 了以后，行
+            <katex-inline data-expr="j"></katex-inline> 的移动量可以用
+            <katex-inline
+              data-expr="\left \lfloor (j-i) \cdot shear \right \rfloor "
+            ></katex-inline>
+            计算；Y轴方向同理。
+          </p>
+          <p>
+            <span class="f3">2. </span>一个旋转可以由三次剪切的叠加表示：一次
+            <katex-inline data-expr="X"></katex-inline>
+            轴，一次
+            <katex-inline data-expr="Y"></katex-inline>
+            轴，再一次
+            <katex-inline data-expr="X"></katex-inline>
+            轴。
+          </p>
+          <aside class="sidenote">
+            <katex-block
+              data-expr="
+                \begin{align*}
+                &\begin{bmatrix}
+                1 & -tan(\frac \theta 2) \\ 0 & 1
+                \end{bmatrix}
+                \cdot 
+                \begin{bmatrix}
+                1 & 0 \\ sin(\theta) & 1
+                \end{bmatrix}
+                \cdot 
+                \begin{bmatrix}
+                1 & -tan(\frac \theta 2) \\ 0 & 1
+                \end{bmatrix}
+                \\
+                &= \begin{bmatrix}
+                1 & -tan(\frac \theta 2) \\ 0 & 1
+                \end{bmatrix}
+                \cdot 
+                \begin{bmatrix}
+                1 & 1 \\ 1 - sin(\theta) & sin(\theta) \cdot  tan(\frac \theta 2)
+                \end{bmatrix}
+                \\
+                &= \begin{bmatrix}
+                1 & -tan(\frac \theta 2) \\ 0 & 1
+                \end{bmatrix}
+                \cdot 
+                \begin{bmatrix}
+                1 & 1 \\ sin(\theta) & cos(\theta)
+                \end{bmatrix}
+                \\
+                &= \begin{bmatrix}
+                1 - sin(\theta) \cdot  tan(\frac \theta 2) & 1 - tan(\frac \theta 2) \cdot cos(\theta) \\ 
+                sin(\theta) & cos(\theta)
+                \end{bmatrix}
+                \\
+                &= \begin{bmatrix}
+                cos(\theta) & -sin(\theta) \\
+                sin(\theta) & cos(\theta)
+                \end{bmatrix}
+                \end{align*}
+              "
+            ></katex-block>
+          </aside>
+          <figure>
+            <svg max-height="300" id="img4" viewBox="-50 -50 460 100">
+              <defs>
+                <g id="axis4">
+                  <rect
+                    x="-50"
+                    y="-50"
+                    width="100"
+                    height="100"
+                    fill="#111111"
+                  />
+                  <line
+                    x1="0"
+                    y1="-50"
+                    x2="0"
+                    y2="50"
+                    stroke="#f4f4f4"
+                    stroke-width="2"
+                  />
+                  <line
+                    x1="-50"
+                    y1="0"
+                    x2="50"
+                    y2="0"
+                    stroke="#f4f4f4"
+                    stroke-width="2"
+                  />
+                </g>
+                <linearGradient id="grad" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(34,193,195,1)" />
+                  <stop offset="100%" stop-color="rgba(253,187,45,1)" />
+                </linearGradient>
+                <g id="square4">
+                  <rect
+                    x="-25"
+                    y="-25"
+                    width="50"
+                    height="50"
+                    fill="url(#grad)"
+                  />
+                </g>
+              </defs>
+              <use href="#axis4" transform="translate(360, 0)" />
+              <use href="#axis4" transform="translate(240, 0)" />
+              <use href="#axis4" transform="translate(120, 0)" />
+              <use href="#axis4" transform="translate(0, 0)" />
+              <g transform="scale(1, -1)">
+                <use
+                  class="square41"
+                  href="#square4"
+                  transform="translate(360, 0)"
+                />
+                <use
+                  class="square42"
+                  href="#square4"
+                  transform="translate(240, 0)"
+                />
+                <use
+                  class="square43"
+                  href="#square4"
+                  transform="translate(120, 0)"
+                />
+                <g class="square44" transform="translate(0, 0)">
+                  <use class="square441" href="#square4" />
+                </g>
+              </g>
+            </svg>
+            <katex-block
+              data-expr="
+                \begin{bmatrix}
+                cos(\theta) & -sin(\theta) \\
+                sin(\theta) & cos(\theta)
+                \end{bmatrix}
+                = 
+                \begin{bmatrix}
+                1 & -tan(\frac \theta 2) \\ 0 & 1
+                \end{bmatrix}
+                \cdot 
+                \begin{bmatrix}
+                1 & 0 \\ sin(\theta) & 1
+                \end{bmatrix}
+                \cdot 
+                \begin{bmatrix}
+                1 & -tan(\frac \theta 2) \\ 0 & 1
+                \end{bmatrix}
+              "
+            ></katex-block>
+            <div class="input">
+              <label for="theta4">theta</label>
+              <input
+                type="range"
+                min="0"
+                max="359"
+                step="1"
+                value="0"
+                id="theta4"
+              />
+              <span id="theta4-display" style="width: 3rem">0</span>
+            </div>
+            <script type="module">
+              import { Clock } from "./utils.js";
+              const img4 = document.getElementById("img4");
+              const theta4El = document.getElementById("theta4");
+              const theta4Dis = document.getElementById("theta4-display");
+              const square42 = img4.querySelector(".square42");
+              const square43 = img4.querySelector(".square43");
+              const square44 = img4.querySelector(".square44");
+              const square441 = img4.querySelector(".square441");
+              function transformGroup(angle) {
+                function t(s, str) {
+                  s.setAttribute("transform", str);
+                }
+                const angX = (Math.atan(-Math.tan(angle / 2)) / Math.PI) * 180;
+                const angY = (Math.atan(Math.sin(angle)) / Math.PI) * 180;
+                t(square42, `translate(240, 0) skewX(${angX})`);
+                t(square43, `translate(120, 0) skewX(${angX}) skewY(${angY})`);
+                t(square44, `translate(0, 0) skewX(${angX}) skewY(${angY})`);
+                t(square441, `skewX(${angX})`);
+              }
+              function update(angle) {
+                if (angle === undefined) angle = theta4El.value;
+                else theta4El.value = angle;
+                transformGroup((angle * Math.PI) / 180);
+                theta4Dis.textContent = `${angle}°`;
+              }
+              const rt4 = 1000 * 16;
+              let fn4 = (t, angle0, t0) => {
+                // ensure that fn(t0, angle0, t0) == angle0
+                const angle = Math.floor(
+                  (((t - t0) / rt4) * 360 + angle0) % 360
+                );
+                return angle;
+              };
+              const clock4 = new Clock((t) => {
+                update(fn4(t, 0, 0));
+              });
+              theta4El.addEventListener("input", (e) => {
+                const now = clock4.now;
+                const angle = parseInt(theta4El.value);
+                const delay = 4000;
+                clock4.set((t) => {
+                  if (t - now < delay) return;
+                  update(fn4(t, angle, now + delay));
+                });
+                update();
+              });
+              update();
+
+              clock4.on();
+            </script>
+            <figcaption>
+              这四张图分别展示一个渐变色的方块增加一个矩阵变换后，变成的新平行四边形。最左侧的方块进行了旋转。
+            </figcaption>
+          </figure>
+          <p>
+            这是一个非常令人意想不到的结果！经过这样的拆分，最终的算法就显而易见了。
+          </p>
+        </section>
+
+        <section>
+          <h2>实现与分析</h2>
+          <p>
+            既然我们可以对图片进行近似剪切操作，也可以将一个旋转分解为若干个剪切，那么只要把
+            <span class="wavy">精细的剪切替换成像素网格上的近似</span>
+            ，我们就能旋转一张图片了！
+          </p>
+          <figure>
+            <svg max-height="300" id="img5" viewBox="-50 -50 460 100">
+              <defs>
+                <g id="bg5">
+                  <rect
+                    x="-50"
+                    y="-50"
+                    width="100"
+                    height="100"
+                    fill="#111111"
+                  />
+                </g>
+              </defs>
+              <use href="#bg5" transform="translate(360, 0)" />
+              <use href="#bg5" transform="translate(240, 0)" />
+              <use href="#bg5" transform="translate(120, 0)" />
+              <use href="#bg5" transform="translate(0, 0)" />
+              <g class="imgs"></g>
+            </svg>
+            <div class="input mv3">
+              <label for="theta5">theta</label>
+              <input type="range" min="-90" max="90" value="0" id="theta5" />
+              <span id="theta5-display" style="width: 3rem"></span>
+            </div>
+            <script type="module">
+              import {
+                Clock,
+                shearX,
+                shearY,
+                loadBitmap,
+                svg,
+                arrayToBase64,
+              } from "./utils.js";
+              const fighter0 = await loadBitmap("./Rtyper9.png");
+              const img5 = document.getElementById("img5");
+              const container5 = img5.querySelector(".imgs");
+              const theta5El = document.getElementById("theta5");
+              const theta5Dis = document.getElementById("theta5-display");
+              function transformGroup(angle) {
+                function img(data, dx) {
+                  const size = 100;
+                  return svg("image", {
+                    href: arrayToBase64(data),
+                    width: size,
+                    height: size,
+                    style: "image-rendering: pixelated;",
+                    transform: `translate(${-size / 2 + dx}, ${-size / 2})`,
+                  });
+                }
+                const dX = -Math.tan(angle / 2);
+                const dY = Math.sin(angle);
+                container5.innerHTML = "";
+                const fighter1 = shearX(fighter0, dX);
+                const fighter2 = shearY(fighter1, dY);
+                const fighter3 = shearX(fighter2, dX);
+                container5.appendChild(img(fighter0, 360));
+                container5.appendChild(img(fighter1, 240));
+                container5.appendChild(img(fighter2, 120));
+                container5.appendChild(img(fighter3, 0));
+              }
+              function update(angle) {
+                if (angle === undefined) angle = theta5El.value;
+                else theta5El.value = angle;
+                transformGroup((angle * Math.PI) / 180);
+                theta5Dis.textContent = `${angle}°`;
+              }
+              const rt5 = 20;
+              let fn5 = (t, angle0, t0) => {
+                // ensure that fn(t0, angle0, t0) == angle0
+                const angle = Math.round(
+                  Math.sin(
+                    (((t - t0) / 1000) * Math.PI * 2) / rt5 +
+                      Math.asin(angle0 / 90)
+                  ) * 90
+                );
+                return angle;
+              };
+              const clock5 = new Clock((t) => {
+                update(fn5(t, 0, 0));
+              });
+              theta5El.addEventListener("input", (e) => {
+                const now = clock5.now;
+                const angle = parseInt(theta5El.value);
+                const delay = 4000;
+                clock5.set((t) => {
+                  if (t - now < delay) return;
+                  update(fn5(t, angle, now + delay));
+                });
+                update();
+              });
+              update();
+
+              clock5.on();
+            </script>
+            <figcaption>
+              四张图，分别展示本文开始的宇宙飞船增加一个矩阵变换后成为的新形状。
+            </figcaption>
+          </figure>
+          <p>
+            从图里也许你已经能看出来了，这个算法有一个显而易见的劣势：需要一个足够大的边框，用来存放剪切后挪出来的像素点；
+            这也意味着旋转的角度不能太大。上面的动画展示的旋转只有-90° ~
+            90°，因为超过这180°的旋转范围，
+            只需要中心对称地翻转一下就能转化为范围内的旋转。文章开头的旋转动画就是这样完成的。
+          </p>
+          <p>
+            这个奇怪的算法其实也有一些优势。首先一个，图中的每一个像素点恰好对应新图片上的一个像素点，不多不少！
+            基于插值的其他旋转算法在旋转时可能会丢掉一些亮度较高的像素点，但这个算法不会。
+          </p>
+          <p>
+            另一个有趣的地方是，这个算法是
+            <span class="wavy">完全可逆的</span>！
+            旋转两次只要和为0°，就能回到原来的位置。
+          </p>
+          <p>
+            一般来说，图像旋转的任务都会交给GPU来完成，但对于一些古老的、没有内置旋转算法的硬件，
+            这个算法的效率相当地高，因为很多硬件都能高效地实现剪切操作。
+          </p>
+          <p>
+            这个算法还能拓展到三维以及更高维的空间，因为高维旋转矩阵也能分解为若干个剪切矩阵的乘积
+            （具体的分解方法就留给读者自己推导了）。
+          </p>
+        </section>
+        <section class="mv4">
+          <p>
+            说实话，硬要说这个算法有什么用，它的用处其实不大：在硬件那么快的今天，
+            没有什么人会用这个算法来旋转图片。但是，它带给我们的惊奇的确是少有的。正如Samuel
+            Johnson 所说：
+          </p>
+          <p class="f3 athelas lh-copy bg-washed-yellow">
+            "It is not done well; but you are surprised to find it done at all!"
+          </p>
+          <figure>
+            <svg max-height="300" id="img6" viewBox="-105 -50 210 100">
+              <rect x="-105" y="-50" width="100" height="100" fill="#111111" />
+              <rect x="5" y="-50" width="100" height="100" fill="#eeeeee" />
+              <g class="left-side" transform="translate(-55, 0)"></g>
+              <g class="right-side" transform="translate(55, 0)"></g>
+            </svg>
+            <script type="module">
+              import {
+                loadBitmap,
+                svg,
+                Clock,
+                rotate,
+                arrayToBase64,
+              } from "./utils.js";
+              const fighterAgain = await loadBitmap("./Rtyper9.png");
+              const heart = await loadBitmap("./heart.png");
+              const img6 = document.getElementById("img6");
+
+              const leftSide6 = img6.querySelector(".left-side");
+              const rightSide6 = img6.querySelector(".right-side");
+
+              const size6 = 120;
+
+              function update(angle) {
+                leftSide6.innerHTML = "";
+                leftSide6.appendChild(
+                  svg("image", {
+                    href: arrayToBase64(rotate(fighterAgain, angle)),
+                    width: size6,
+                    height: size6,
+                    style: "image-rendering: pixelated;",
+                    transform: `translate(${-size6 / 2}, ${-size6 / 2})`,
+                  })
+                );
+                rightSide6.innerHTML = "";
+                rightSide6.appendChild(
+                  svg("image", {
+                    href: arrayToBase64(rotate(heart, angle)),
+                    width: size6,
+                    height: size6,
+                    style: "image-rendering: pixelated;",
+                    transform: `translate(${-size6 / 2}, ${-size6 / 2})`,
+                  })
+                );
+              }
+
+              const clock6 = new Clock();
+              const loopTime6 = 10;
+              function fn6(t) {
+                return (t / 1000 / loopTime6) * Math.PI * 2;
+              }
+              clock6.set((t) => update(fn6(t)));
+              clock6.on();
+            </script>
+          </figure>
+        </section>
+      </article>
+    </main>
+    <footer>
+      <p>本文由<span class="wavy">黄晨轩</span>创作。</p>
+      <ul>
+        <li>
+          邮箱是<a href="mailto:huangcx22@mails.tsinghua.edu.cn"
+            >huangcx22@mails.tsinghua.edu.cn</a
+          >。欢迎发邮件来！
+        </li>
+      </ul>
+      <p>
+        采用
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hans"
+          >CC BY-SA 4.0</a
+        >进行许可。
+      </p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>暑假教程展示</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css"
+    />
+    <link rel="stylesheet" href="hv.css" />
+    <script defer src="hv.js"></script>
+  </head>
+  <body>
+    <article class="cf ph3 ph5-ns pv5">
+      <header class="fn fl-ns w-40-l pr4-ns pb5 hv-over">
+        <h1 class="f1 lh-title fw8 mb4 mt0 pt3 bt bw2 b--green hv-over">
+          暑假示例教程展示
+        </h1>
+        <h2 class="f3 mid-gray lh-title">未央科协成员们完成的示例教程</h2>
+        <time class="f6 fw1 ttu tracked gray hv-over">2024年暑假</time>
+      </header>
+      <div class="fn fl-ns w-50-ns ml4-l">
+        <p class="f5 lh-copy measure mt0-ns">
+          未央书院科协成员们在2024年暑假期间完成了一系列示例教程，这些教程涵盖了各种各样的主题。它们是我们希望放在网站上的教程的示例。
+        </p>
+        <ul class="f5 lh-copy measure shuffled">
+          <li>
+            <a
+              href="./gallery/rotating/"
+              class="dib no-underline underline-hover dark-blue"
+              >通过剪切旋转</a
+            >， 来自<span>黄晨轩</span>
+          </li>
+          <li>
+            <a
+              href="./gallery/led/"
+              class="dib no-underline underline-hover dark-blue"
+              >电子显示技术科普</a
+            >， 来自<span>吴浩然</span>
+          </li>
+          <li>
+            <a
+              href="./gallery/damped-spring/"
+              class="dib no-underline underline-hover dark-blue"
+              >矩阵特征值 <-> 系统响应</a
+            >， 来自<span>周智扬</span>
+          </li>
+          <li>
+            <a
+              href="./gallery/tkinter/"
+              class="dib no-underline underline-hover dark-blue"
+              >使用python制作一个简单GUI界面</a
+            >， 来自<span>柏子谦</span>
+          </li>
+          <li>
+            <a
+              href="./gallery/vlaw/"
+              class="dib no-underline underline-hover dark-blue"
+              >V字型法则</a
+            >， 来自<span>赵宸宇</span>
+          </li>
+          <li>
+            <a
+              href="https://liuyifan22.github.io/3doors/"
+              class="dib no-underline underline-hover dark-blue"
+              >本关考验你：三门问题</a
+            >， 来自<span>刘亦钒</span>
+          </li>
+        </ul>
+      </div>
+    </article>
+    <script class="hv-echo">
+      const shuffled = document.querySelector(".shuffled");
+      const children = Array.from(shuffled.children);
+      const permutated = children.sort(() => Math.random() - 0.5);
+      permutated.forEach((child) => shuffled.appendChild(child));
+    </script>
+  </body>
+</html>

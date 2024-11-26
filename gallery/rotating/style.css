@@ -1,0 +1,114 @@
+* {
+  box-sizing: border-box;
+}
+
+article {
+  display: grid;
+  grid-template-columns: min(36em, 100%) 1fr;
+}
+
+article > * {
+  grid-column: 1/2;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.25rem;
+}
+
+.wavy {
+  background-image: url('underline.svg');
+  background-position: 0 calc(100% - 1.5px);
+  background-size: auto 3px;
+  background-repeat: repeat-x;
+  padding-bottom: 3px;
+  text-decoration: none;
+}
+
+figure {
+  margin: 0;
+  padding-top: 1rem;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+figcaption {
+  font-style: italic;
+  font-size: 0.8em;
+  text-align: center;
+  padding: 1rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+.input {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.input>label, .input>span {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+katex-block {
+  display: block;
+  margin: 1rem 0;
+}
+
+footer {
+  border: 1px solid #cccccc;
+  padding: 0 1rem;
+}
+footer * {
+  font-size: small;
+}
+
+/* sidenotes from tufte.css */
+
+.sidenote,
+.marginnote {
+  float: right;
+  clear: right;
+  margin-right: -75%;
+  width: 50%;
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+  line-height: 1.25;
+  vertical-align: baseline;
+  position: relative;
+}
+/* label.sidenote-number {
+  display: inline;
+}
+label.margin-toggle:not(.sidenote-number) {
+  display: none;
+} */
+/* The mobile fallback: */
+@media (max-width: 1080px) {
+  /* .sidenote,
+  .marginnote {
+    display: none;
+  } */
+  .sidenote, .marginnote {
+    display: block;
+    float: left;
+    left: 1rem;
+    clear: both;
+    width: 95%;
+    margin: 1rem 2.5%;
+    position: relative;
+  }
+}

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eigenvalue</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="d3.js"></script>
+    <script src="plot.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <h1>矩阵特征值\(\boldsymbol{\leftrightarrow}\)系统响应</h1>
+
+    
+    <section id="intro">
+      <h2>引言</h2>
+      <p>相信大家对以下两个公式并不陌生。</p>
+      <div id="equation">
+        \[M\frac{d^2 y}{dt^2}+B\frac{dy}{dt}+K y = 0\]
+        \[|\lambda I - A|=0\]
+      </div>
+      <p>第一个式子是阻尼振动的方程，第二个是求矩阵特征值的方程。</p>
+      <p>在接下来的例子中我们将看到，如何通过矩阵的特征值，来分析线性零输入响应系统的状态。</p>
+    </section>
+    
+    <section id="example">
+      <h2>弹簧、阻尼与质量块模型</h2>
+      <img src="physical.png" alt="弹簧、阻尼与质量块图片" height="200">
+      <!-- <div id="legend">来源：</div> -->
+
+      <div id="demo"></div>
+      <button id="demo-button">click me to play</button>
+
+      <div id="equation">
+        \[M\frac{d^2 y}{dt^2}+B\frac{dy}{dt}+K y = 0\]
+      </div>
+
+      <p>令</p>
+      <div id="equation">
+        \[x_{1}=y,\quad x_{2}=y^{\prime}\]
+        \[X=\begin{bmatrix}x_{1} \\ x_{2}\end{bmatrix}\]
+      </div>
+      
+      <p>则上述二阶ODE化为</p>
+      <div id="equation">
+        \[X' = AX\]
+        \[A=\begin{bmatrix}0 & 1 \\ -\frac{K}{M} & -\frac{B}{M}\end{bmatrix}\]
+        \[y=\begin{bmatrix}1 & 0\end{bmatrix}X\]
+      </div>
+
+      <p>
+        基物课上学过，通过判断\(\Delta =B^{2}-4MK\) 的正负性可分为过阻尼、临界阻尼和欠阻尼三种情形。<br>
+        但此处不详细考虑这三种情形，而是按照\(B\)的正负性分为正阻尼（上述三种都属于此类）、零阻尼和负阻尼，
+        分别对应\(B>0\)、\(B=0\)和\(B<0\)。
+      </p>
+    </section>
+    
+    <section id="overdamped">
+      <h2>正阻尼（以欠阻尼为例）</h2>
+
+      <p>设\(M=1,\quad K=4,\quad B=1\)</p>
+
+      <div id="equation">
+        \[A=\begin{bmatrix}0 & 1 \\ -4 & -1\end{bmatrix}\]
+      </div>
+
+      <p>计算得到A的一对共轭特征值为</p>
+      
+      <div id="equation">
+        \[\lambda_{1}=-0.5+1.9365i,\quad v_{1}=\begin{bmatrix}0.894 & -0.447\end{bmatrix}^{T}\]
+        \[\lambda_{2}=-0.5-1.9365i,\quad v_{2}=\begin{bmatrix}-0.447 & 0.894\end{bmatrix}^{T}\]
+      </div>
+
+      <p>
+        当存在复特征值\(\lambda=a+bi\)时，可得到两个线性无关的解（证明略）
+      </p>
+      
+      <div id="equation">
+        \[y_{1}(t)=\begin{bmatrix}(Re\nu)\cos bt-(Im\nu)\sin bt\end{bmatrix}e^{at}\]
+        \[y_{2}(t)=\begin{bmatrix}(Re\nu)\cos bt+(Im\nu)\sin bt\end{bmatrix}e^{at}\]
+      </div>
+
+      <!-- <p>代入得</p>
+
+      <div id="equation">
+        \[y_{1}(t)=\begin{bmatrix}0.1118\cos 1.9365t-0.433\sin 1.9365t\end{bmatrix}e^{-0.5t}\]
+        \[y_{2}(t)=\begin{bmatrix}0.1118\sin 1.9365t+0.433\cos 1.9365t\end{bmatrix}e^{-0.5t}\]
+      </div> -->
+
+      <p>
+        设初始值\(x(0)=\begin{bmatrix}5 \\0\end{bmatrix}\)，即初始位置为5，初速度为0。计算线性组合的系数，最终得到
+      </p>
+
+      <div id="equation">
+        \[y(t) = e^{-0.5t}*((5\cos(1.9365t)) + 1.291\sin(1.9365t))\]
+      </div>
+
+      <p>或者使用matlab直接求解二阶常微分方程得到</p>
+
+      <div id="equation">
+        \[y(t) = e^{-t/2}/3*((15\cos(15^{1/2}*t/2)) + 15^{1/2}\sin(15^{1/2}*t/2))\]
+      </div>
+
+      <p>代码如下</p>
+
+      <div class="code">
+        % matlab code
+        syms y(t) M B K
+        eqn = M*diff(y,t,2) + B*diff(y,t) + K*y == 0;
+        Dy = diff(y,t);
+        cond = [y(0)==5, Dy(0)==0];
+        ySol(t) = dsolve(eqn,cond)
+      </div>
+      <br>
+
+      <div class="animation">
+        <!-- <div id="rectangle1"></div>
+        <button id="start-button1">play</button>
+        <div id="plot-container1"></div> -->
+      </div>
+
+      <div id="legend">注：动画持续约六个周期，重播需刷新网页</div>
+
+      
+    </section>
+    
+    
+    <section id="zerodamped">
+      <h2>零阻尼</h2>
+
+      <p>设\(M=1,\quad K=9,\quad B=0\)</p>
+      <p>计算得到A的一对共轭特征值为</p>
+
+      <div id="equation">
+        \[\lambda_{1}=3i,\quad v_{1}=\begin{bmatrix}-0.3162i & 0.9487\end{bmatrix}^{T}\]
+        \[\lambda_{2}=-3i,\quad v_{2}=\begin{bmatrix}0.3162i & 0.9487\end{bmatrix}^{T}\]
+      </div>
+
+      <p>方程解为</p>
+
+      <div id="equation">
+        \[y(t) = 5\cos(3t)\]
+      </div>
+
+
+      <div class="animation"></div>
+      
+
+    </section>
+
+    <section id="negtdamped1">
+      <h2>负阻尼（虚特征根）</h2>
+
+      <p>设\(M=1,\quad K=9,\quad B=-1\)</p>
+      <p>计算得到A的一对共轭特征值为</p>
+
+      <div id="equation">
+        \[\lambda_{1}=0.5+2.958i,\quad v_{1}=\begin{bmatrix}0.0527-0.3118i & 0.9487\end{bmatrix}^{T}\]
+        \[\lambda_{2}=0.5-2.958i,\quad v_{2}=\begin{bmatrix}0.0527+0.3118i & 0.9487\end{bmatrix}^{T}\]
+      </div>
+
+      <p>方程解为</p>
+
+      <div id="equation">
+        \[y(t) = e^{0.5t}(5\cos(\sqrt{35}/2 t)-\sqrt{35}/7\sin(\sqrt{35}/2 t))\]
+      </div>
+
+      <div class="animation"></div>
+      
+
+    </section>
+
+    <section id="negtdamped2">
+      <h2>负阻尼（实特征根）</h2>
+
+      <p>设\(M=1,\quad K=9,\quad B=-8\)</p>
+      <p>计算得到A的特征值为</p>
+
+      <div id="equation">
+        \[\lambda_{1}=1.3542,\quad v_{1}=\begin{bmatrix}-0.5940 & -0.8045\end{bmatrix}^{T}\]
+        \[\lambda_{2}=6.6458,\quad v_{2}=\begin{bmatrix}-0.1488 & -0.9889\end{bmatrix}^{T}\]
+      </div>
+
+      <p>方程解为</p>
+
+      <div id="equation">
+        \[y(t) = e^{(4-\sqrt{7})t}(10\sqrt{7}/7+5/2)+e^{(\sqrt{7}+4)t}(5/2-10\sqrt{7}/7)\]
+      </div>
+
+
+      <div class="animation"></div>
+      
+
+    </section>
+
+    <section id="summary">
+      <h2>总结</h2>
+
+      <p>
+        由上述四组实验可知，当特征值的实部的正负性决定了观测量是发散、不变还是收敛，虚部的大小反应了震荡的强度。
+      </p>
+
+      <table>
+        <caption>
+          Summary
+        </caption>
+        <tr>
+          <th>特征值</th>
+          <th>系统变化趋势</th>
+          <th>概括</th>
+        </tr>
+        <tr>
+          <td><img src="t1.png" alt="1" height="250"></td>
+          <td><img src="p1.png" alt="1" height="250"></td>
+          <td>震荡收敛</td>
+        </tr>
+        <tr>
+          <td><img src="t2.png" alt="2" height="250"></td>
+          <td><img src="p2.png" alt="2" height="250"></td>
+          <td>震荡</td>
+        </tr>
+        <tr>
+          <td><img src="t3.png" alt="3" height="250"></td>
+          <td><img src="p3.png" alt="3" height="250"></td>
+          <td>震荡发散</td>
+        </tr>
+        <tr>
+          <td><img src="t4.png" alt="4" height="250"></td>
+          <td><img src="p4.png" alt="4" height="250"></td>
+          <td>发散</td>
+        </tr>
+      </table>
+
+    </section>
+
+
+    <section>
+      <h2>附录</h2>
+      <p>参考</p>
+      <ul>
+        <li>《测控技术与仪器验证探索》课件</li>
+        <li>微积分讲义</li>
+        <li>MDN web doc</li>
+      </ul>
+      <p>作者</p>
+      <ul>
+        <li>周智扬 未央-精21</li>
+        <li>电话/微信：13651804190</li>
+        <li>邮箱：zhou-zy22@mails.tsinghua.edu.cn</li>
+      </ul>
+    </section>
+    
+    
+    
+    
+  
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>  
+<html lang="zh-CN"> 
+     
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>显示技术科普</title>  
+    <style>  
+         h1{
+            text-align: center;
+         }
+         h3{
+            text-align: center;
+         }
+         p.phrase{
+            text-indent: 2em; 
+            text-align: center;
+            font-size: 18px;
+            margin-top: 8px;
+            margin-bottom: 8px;
+         }
+         p.statement{
+            text-indent: 2em;
+            line-height:2;
+            font-size: 16px;
+            margin-left:1em;
+         }
+         img.normal{
+            width:100% ;
+            max-width: 350px;
+            min-width: 300px;
+            border: 4px solid black;
+         }
+         .first{
+            background-image: url(./LED-1.jpg);
+            width:500px;height:300px;
+         }
+         .img-container{
+            display:grid;
+            place-items: center;
+         }
+         .img-block1{
+            display:flex;
+            flex-direction: column;
+            align-items: center;
+         }
+         .img-block2{
+            display:flex;
+            flex-direction:row;
+            justify-content: center;
+            align-items: center;
+            gap: 1.25 rem;
+            flex-wrap: wrap;
+         }
+        @media screen and (min-width: 45em) and (max-width: 60em) {
+            .img-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-gap: 1.25rem;
+            }
+        }
+        @media screen and (min-width: 60em) {
+            .img-container {
+                grid-template-columns: repeat(3, minmax(12em, 1fr));
+                grid-gap: 2rem;
+            }
+        }
+        @media screen and (min-width: 45em) {
+            .img-block2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-gap: 1.25rem;
+            }
+        }
+    </style>  
+</head>  
+<body>
+    <h1>电子显示技术科普</h1>
+    <p class="phrase">
+        20世纪中期直到如今的21世纪初，视觉信息的传递与展现超越了信息时代之前的技术，只能通过印刷乃至手抄才能呈现的二维影像。
+    </p></br>
+    <p class="phrase">
+        现代中国大地上，手机、电脑显示屏已经成了许多人最常使用的信息媒介，而支撑这种显示技术实现的，正是信息技术中的显示材料。
+    </p></br>
+    <p class="phrase">
+        为什么显示屏能够显示出五彩斑斓的颜色？现在新潮的OLED技术和传统LED技术的区别是什么？我们接下来将一一揭晓。
+    </p>
+    <article>
+        <div class="img-container">
+            <div class="img-block1">
+                <img class="normal" src="./LED-1.jpg" alt="Micro-LED显示全彩化技术" style="border: 4px solid red;">
+                <p>Micro-LED显示全彩化技术</p>
+            </div>
+            <div class="img-block1">
+                <img class="normal" src="./LED-2.jpg" alt="OLED全彩构造分层示意" style="border: 4px solid green;">
+                <p>OLED全彩构造分层示意</p>
+            </div>
+            <div class="img-block1">
+                <img class="normal" src="./LED-3.jpg" alt="等离子体（PDP）显示技术" style="border: 4px solid blue;">
+                <p>等离子体（PDP）显示技术</p>
+            </div>
+        </div>
+    </article>
+    <section>
+        <h1>一、电子纸技术的失落与未来</h1>
+        <p class="statement">电子纸（E-paper）技术,主要指通过改变显示屏本身颜色来进行显示的技术。最早成型的电子纸诞生于MIT（麻省理工大学）的贝尔实验室，由Neil Gershenfeld制造。
+            目前，主流的技术方向有电润湿技术、电致变色技术、电泳显示技术几种。目前，电泳显示技术的商业化较为广泛。
+            亚马逊的Kindle电子阅读器采用的是电泳显示技术，曾在中国大陆上做到了年销百万，铸就了自己的辉煌，给中国一代人留下了难以磨灭的印记；
+            然而15年左右逐渐没落，在2024年6月30停止云下载服务。下面介绍电泳显示技术。
+        </p>
+        <div class="img-block2">
+            <img class="normal" src="./ePP-1.png" alt="微胶囊示意图">
+            <div style="display:grid; max-width: 40em; grid-template-columns: repeat(2,minmax(0,1fr));grid-gap:2rem;">
+                <p class="statement" style="width:100%;">
+                    1.电泳显示技术中，电子显示屏由一个个直径可与人类毛发相当的微胶囊组成，在1cm^2的面积上可以存在数万个像素。
+                    每个微胶囊含有许多的带正电的白色粒子和带负电的黑色粒子（常为胶体粒子）因此可以在定向电场的作用下发生移动。
+                </p>
+                <p class="statement" style="width:100%;">
+                    2.电子纸显示技术均属于【反射型显示技术】，因此有电压低、耗电少、视场广角、不易使用户视觉疲劳等优点。
+                </p>
+                <p class="statement" style="width:100%;">
+                    3.E-paper的缺点是它的显示依赖于有色粒子的移动或者化学反应着色，因此显示的切换时间相当长，电泳显示技术为数百ms（Kindle电子阅读器的刷新率为3Hz），
+                    最短的电子润湿技术在实验室中可达10ms，这意味着几乎不可能将其用于视频的显示，因此被大大冷落。
+                </p>
+                <p class="statement" style="width:100%;">
+                    4.日前，彩色显示技术迅速发展，尽管目前色彩鲜艳度、对比度不是很高，但已经用于商业，受到一定的追捧。
+                </p>
+            </div>
+        </div>
+    </section>
+    <section>
+        <h1>二、LED显示技术的发展</h1>
+        <p class="statement">
+            LED（Light Emitting Diode）指发光二极管，它可以在一定流向的电流作用下将电能转化为光能。
+        </p>
+        <div class="img-block2">
+            <img class="normal" src="./LED-5.png" alt="能带理论示意图">
+            <div>
+                <h2 style="text-align: center;">能带理论</h2>
+                <p class="statement">
+                    能带理论中，固体材料中的各个原子能够对附近原子的电子产生一定的作用，因此材料中所有的电子形成了整体。
+                    不同能层的电子具有不同能量，电子按照是否具有相近能量分层，每一层电子称为能带。
+                </p>
+            </div>
+        </div>
+        <div class="img-block2">
+            <p class="statement">
+                半导体的带隙介于导体和绝缘体之间，在一定的外部条件下价电子层的电子能跃迁到导带上导电，
+                导带电子跃迁到价电子层时能量以光子的形式散失，这就是发光的原理。因此LED的发光效率远远超过白炽灯、荧光灯，单色性也非常好。
+            </p>
+            <img class="normal" src="./LED-4.png" alt="半导体发光原理">
+        </div>
+        <p class="statement">
+            带隙越大，电子跃迁时发出的光子能量就越大，因此光波频率越大，越接近紫光；
+            然而带隙越大，半导体越接近绝缘体，以至几乎无法导电，发光强度也几乎可以忽略不计。
+            从最早发现的半导体发光现象（红外光，1961年）到制造可见的红光（1962年）再到黄绿光（约1967），纯黄、纯绿（1972），
+            LED技术飞速发展。然而高能的蓝光却在数以千计的研究员长时间的攻关下毫无进展。以至于很长时间内LED只能用于指示灯等领域。
+            孟山都公司的一位主管曾悲观地语言：这些LED等永远不会取代厨房灯
+            直到1993年，中村修二研制出达到了使用标准的蓝光LED,自此我们终于能用红黄蓝三色LED合成各种颜色，他也因此获得2014年的诺贝尔奖。
+        </p>
+        <h2 style="text-align: center;">LED三原色</h2>
+        <div class="img-container">
+            <div>
+                <img src="./LED-8.png" alt="半导体发光原理" style="border: 4px solid red">
+            </div>
+            <div>
+                <img src="./LED-6.jpg" alt="半导体发光原理" style="border: 4px solid green">
+            </div>
+            <div>
+                <img src="./LED-7.jpg" alt="半导体发光原理" style="border: 4px solid blue">
+            </div>
+        </div>
+        <h3>然而LED的发展远未结束</h3>
+        <h2>1.OLED显示技术</h2>
+        <p class="statement">
+            OLED（Organic Light Emtting Diode）是在电场作用下，电子、空穴（电子缺失的位置）注入到有机薄膜并传输、复合，最终实现发光的技术。
+            早在20世纪50年代就有研究员发现了有机材料电致发光的现象。1963年给蒽通入直流电发出了红光。此后OLED迅速发展，目前已经商用。
+            OLED发光的原理是当电流经过有机材料的时候，电子从能量较高的导电能级跃迁向能量较低的激发态甚至基态能级时能量以光子形式散失。
+            由于是将有机发光层“印刷”到导电层上，故而成功实现每一个发光单元比传统LED发光单元小很多。相比于其他显示技术，OLED能够对每一个像素亮度实现精准控制，
+            因此它的颜色对比度很高。
+        </p>
+        <div>
+            <div class="img-block2">
+                <img class="normal" src="./LED-11.png" alt="OLED结构及发光原理示意图">
+                <div>
+                    <p class="statement">
+                        1.薄膜化的全固态硬件、无真空腔和液体成分，稳定性好
+                    </p>
+                    <p class="statement">
+                        2.高亮度，目前可达300cd/m^2以上，效率高，普遍超80lm/W
+                    </p>
+                    <p class="statement">
+                        3.反应速度普遍可达数百乃至数十微秒
+                    </p>
+                    <p class="statement">
+                        4.宽视角、易实现柔性显示、色彩对比度好
+                    </p>
+                    <p class="statement">
+                        5.缺点是因材料为有机的寿命较短
+                    </p>
+                </div>
+            </div>
+        </div>
+        <h2>2.Micro-LED显示技术</h2>
+        <p class="statement">
+            Micro-LED显示技术是将LED背光源进行阵列化、微小化、薄膜化之后搭载在电路基板上的显示技术，将像素的距离从以往的毫米级降至微米级。
+        </p>
+        <div class="img-block2">
+            <img class="normal" src="./LED-9.jpg" alt="Micro-LED实装演示">
+            <div>
+                <p class="statement">
+                    由于采用无机发光材料，Micro-LED不需要使用OLED精密的封装层，使得显示屏厚度较小。
+                </p>
+                <p class="statement">
+                    目前Micro-LED显示技术继承并发扬了LED技术高成本的特点，但做到了功耗降低，基本上各种显示性能都是一流的。
+                </p>
+            </div>
+        </div>
+    </section>
+    <section>
+        <h1>三、传统显示技术：LCD与PDP</h1>
+        <p class="statement">
+            LCD（Liquid Crystal Display）指液晶显示技术。我们在小学二年级的时候学过，液晶主要有层列液晶、向列液晶、胆甾相液晶这几种。
+            胆甾相液晶存在自有螺旋距（约300nm）恰好是可见光波长的量级。添加在向列相液晶之中可以引导液晶扭曲排列，起到偏振膜的作用，在电场的控制下可以改变其透光性。
+            液晶显示就会采用一张大的背景发光屏幕，通过红绿蓝透光片来控制颜色，通过液晶来控制光线的出入和经过各透光片强度实现彩色的效果。
+        </p>
+        <div class="img-block2">
+            <div class="img-block1">
+                <img class="normal" src="./LED-10.png" alt="液晶显示技术的实现">
+                <p class="statement">
+                    <strong>液晶显示技术的实现</strong>
+                </p>
+            </div>
+            <p class="statement">
+                在这种技术之中，因为要控制液晶的转向所以在响应速度上有所欠缺。另外由于多个像素共用一个背光板，液晶分子对光线的偏振效果是连续的，
+                所以在颜色的对比度上LCD技术相对较差。另外液晶分子还会对光线有一定的泄露，因此难以显现纯黑的颜色。
+                目前主要有VA、IPS、TN三种技术路线，他们对显示屏的功能各有取舍和突出。
+            </p>
+        </div>
+        <p class="statement">
+            PDP（Plasma Display Panel）等离子体显示板技术利用等离子体放电发光进行显示。在上千个低压的气体密闭室之中通入电流将气体电离，
+            等离子体放电的时候发出紫外线激发荧光涂层以此成像。工作时，在气体密闭室的基层上有正交的电极。工作时，所有电极维持一定的电压，
+            需要某单元发光时就给相对应的X、Y电极一个脉冲。放电产生的离子积累到电极保护层上，形成反向电场（壁电场），当电极电压反向时，
+            和该壁电场叠加超过阈值再次自发放电，从而维持下去。
+        </p>
+        <div class="img-block2">
+            <div class="img-block1">
+                <img class="normal" src="./PDP-1.png" alt="等离子体显示技术的实现">
+                <p class="statement">
+                    <strong>等离子体显示技术实现</strong>
+                </p>
+                <p class="statement">
+                    <strong>图源：田民波：《电子显示》清华大学出版社</strong>
+                </p>
+            </div>
+            <p class="statement">
+                PDP显示技术的有点有色彩鲜明、对比度高、反应速度快，等离子体放电区间为0.3mm-1.0mm可以实现薄型化。
+                相对于LCD显示技术，没有液晶对光线的定向偏振作用，使得视场的广角性很好。另外，能够在宽广的温度范围内正常工作。
+                缺点是发光效率较低，功耗、工作电压高，而且难以实现小型化的屏幕。
+            </p>
+        </div>
+    </section>
+    <p class="phrase">
+        除了这里介绍的几种常见的显示技术之外，还有CRT、FED等等显示技术，它们各有奥妙，欢迎同学在技术的领域中继续探索。
+    </p>
+</body>  
+</html>
