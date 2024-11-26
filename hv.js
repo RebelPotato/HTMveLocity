@@ -1,3 +1,5 @@
+// WARNING: buggy code ahead
+
 function h(tag, attrs, children) {
   const element = document.createElement(tag);
   if (attrs) {
